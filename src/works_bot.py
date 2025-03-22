@@ -89,9 +89,11 @@ class CommandHandler:
         self.works.send_sticker_message(payload.channel_no, payload.sticker)
 
 
-def receive_publish_packet(works: LineWorks, payload: MessagePayload) -> None:
+def receive_publish_packet(works: LineWorks, packet) -> None:
     """Handle publish packet"""
-    CommandHandler(works).handle(payload)
+    payload = packet.payload
+    if isinstance(payload, MessagePayload):
+        CommandHandler(works).handle(payload)
 
 
 def main() -> None:
