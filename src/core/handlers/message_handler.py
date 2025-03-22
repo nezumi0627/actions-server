@@ -16,6 +16,7 @@ from core.constants.commands import (
     GROUPS_COMMAND,
     HELP_COMMAND,
     SEARCH_COMMAND,
+    SYSTEM_INFO_COMMAND,
     TEST_COMMAND,
     USER_INFO_COMMAND,
 )
@@ -149,6 +150,7 @@ class MessageHandler:
             SEARCH_COMMAND: self.command_handler.search,
             GROUPS_COMMAND: self.command_handler.groups,
             FRIENDS_COMMAND: self.command_handler.friends,
+            SYSTEM_INFO_COMMAND: self.command_handler.system_info,
         }
         self.payload_formatter = PayloadFormatter()
         self.ignored_ids = self._load_ignored_ids()

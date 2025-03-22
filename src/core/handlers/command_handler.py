@@ -14,10 +14,12 @@ from core.constants.commands import (
     GROUPS_COMMAND,
     HELP_COMMAND,
     SEARCH_COMMAND,
+    SYSTEM_INFO_COMMAND,
     TEST_COMMAND,
     USER_INFO_COMMAND,
 )
 from core.utils import load_flex_message
+from core.get_info import get_system_info
 from custom_line_works import CustomLineWorks
 
 # データ取得状態を管理する辞書
@@ -38,6 +40,7 @@ class CommandHandler:
             SEARCH_COMMAND: self.search,
             GROUPS_COMMAND: self.groups,
             FRIENDS_COMMAND: self.friends,
+            SYSTEM_INFO_COMMAND: self.system_info,
         }
 
     def handle_command(
@@ -435,3 +438,44 @@ class CommandHandler:
         formatted_friend += "-" * 30
 
         return formatted_friend
+
+    def system_info(
+        self,
+        works: LineWorks,
+        channel_no: str,
+    ) -> None:
+        """システム情報を取得してFlexメッセージで送信する.
+
+        Args:
+            works: LineWorksクライアント
+            channel_no: チャンネル番号
+            text: メッセージテキスト
+            payload: メッセージペイロード
+        """
+        try:
+            # システム情報を取得
+            system_info = get_system_info()
+            
+            # Flexメッセージを読み込む
+            flex_content = load_flex_message(filename="info.json", alt_text="System Info")
+            
+            # contentsをJSON文字列に変換
+            flex_message = json.dumps(flex_content.contents, ensure_ascii=False)
+            
+            # テンプレートの変数を置換
+            flex_message = flex_message.replace("${os}", system_info["os"])
+            flex_message = flex_message.replace("${windows_version}", system_info["windows_version"])
+            flex_message = flex_message.replace("${language}", system_info["language"])
+            flex_message = flex_message.replace("${cpu}", system_info["cpu"])
+            flex_message = flex_message.replace("${gpu}", system_info["gpu"])
+            flex_message = flex_message.replace("${ram}", system_info["ram"])
+            flex_message = flex_message.replace("${uptime}", system_info["uptime"])
+            
+            # JSON文字列を再度FlexContentのcontentsに変換
+            flex_content.contents = json.loads(flex_message)
+            
+            # メッセージを送信
+            works.send_flex_message(channel_no, flex_content)
+            
+        except Exception as e:
+            works.send_text_message(channel_no, f"システム情報の取得中にエラーが発生しました。{str(e)}")

@@ -14,6 +14,7 @@ USER_INFO_COMMAND: Final[str] = f"{COMMAND_PREFIX}userinfo"
 SEARCH_COMMAND: Final[str] = f"{COMMAND_PREFIX}search"
 GROUPS_COMMAND: Final[str] = f"{COMMAND_PREFIX}groups"
 FRIENDS_COMMAND: Final[str] = f"{COMMAND_PREFIX}friends"
+SYSTEM_INFO_COMMAND: Final[str] = f"{COMMAND_PREFIX}systeminfo"
 
 # 全コマンドのリスト
 ALL_COMMANDS: Final[list[str]] = [
@@ -25,4 +26,5 @@ ALL_COMMANDS: Final[list[str]] = [
     SEARCH_COMMAND,
     GROUPS_COMMAND,
     FRIENDS_COMMAND,
+    SYSTEM_INFO_COMMAND,
 ]

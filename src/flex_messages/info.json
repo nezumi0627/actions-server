@@ -1,0 +1,180 @@
+{
+    "type": "bubble",
+    "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+            {
+                "type": "text",
+                "text": "System Information",
+                "weight": "bold",
+                "size": "xl",
+                "color": "#1DB446",
+                "wrap": true,
+                "margin": "md"
+            },
+            {
+                "type": "separator",
+                "margin": "md"
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "Operating System",
+                        "size": "md",
+                        "color": "#666666",
+                        "wrap": true,
+                        "margin": "sm"
+                    },
+                    {
+                        "type": "text",
+                        "text": "${os}",
+                        "weight": "bold",
+                        "size": "md",
+                        "wrap": true,
+                        "margin": "sm"
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "Windows Version",
+                        "size": "md",
+                        "color": "#666666",
+                        "wrap": true,
+                        "margin": "sm"
+                    },
+                    {
+                        "type": "text",
+                        "text": "${windows_version}",
+                        "weight": "bold",
+                        "size": "md",
+                        "wrap": true,
+                        "margin": "sm"
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "Language",
+                        "size": "md",
+                        "color": "#666666",
+                        "wrap": true,
+                        "margin": "sm"
+                    },
+                    {
+                        "type": "text",
+                        "text": "${language}",
+                        "weight": "bold",
+                        "size": "md",
+                        "wrap": true,
+                        "margin": "sm"
+                    }
+                ]
+            },
+            {
+                "type": "separator",
+                "margin": "md"
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "CPU",
+                        "size": "md",
+                        "color": "#666666",
+                        "wrap": true,
+                        "margin": "sm"
+                    },
+                    {
+                        "type": "text",
+                        "text": "${cpu}",
+                        "weight": "bold",
+                        "size": "md",
+                        "wrap": true,
+                        "margin": "sm"
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "GPU",
+                        "size": "md",
+                        "color": "#666666",
+                        "wrap": true,
+                        "margin": "sm"
+                    },
+                    {
+                        "type": "text",
+                        "text": "${gpu}",
+                        "weight": "bold",
+                        "size": "md",
+                        "wrap": true,
+                        "margin": "sm"
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "RAM",
+                        "size": "md",
+                        "color": "#666666",
+                        "wrap": true,
+                        "margin": "sm"
+                    },
+                    {
+                        "type": "text",
+                        "text": "${ram}",
+                        "weight": "bold",
+                        "size": "md",
+                        "wrap": true,
+                        "margin": "sm"
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "System Uptime",
+                        "size": "md",
+                        "color": "#666666",
+                        "wrap": true,
+                        "margin": "sm"
+                    },
+                    {
+                        "type": "text",
+                        "text": "${uptime}",
+                        "weight": "bold",
+                        "size": "md",
+                        "wrap": true,
+                        "margin": "sm"
+                    }
+                ]
+            }
+        ]
+    }
+}
