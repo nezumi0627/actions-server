@@ -31,80 +31,80 @@ jobs:
       - name: Create Python script
         run: |
           cat > update_readme.py << 'EOF'
-import os
-from datetime import datetime
+          import os
+          from datetime import datetime
 
-# 現在時刻の取得
-current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+          # 現在時刻の取得
+          current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-readme_content = '''
-# LINE WORKS Bot Server with GitHub Actions
+          readme_content = '''
+          # LINE WORKS Bot Server with GitHub Actions
 
-このリポジトリはGitHub Actionsを使用してLINE WORKSのボットを自動実行するプロジェクトです。
+          このリポジトリはGitHub Actionsを使用してLINE WORKSのボットを自動実行するプロジェクトです。
 
-## アーキテクチャ
+          ## アーキテクチャ
 
-```mermaid
-graph TD
-    A[GitHub Actions] --> B[LineWorks Bot]
-    B --> C[LINE WORKS]
-    B --> D[Log System]
-    D --> E[Stats]
-    D --> F[Graphs]
+          ```mermaid
+          graph TD
+              A[GitHub Actions] --> B[LineWorks Bot]
+              B --> C[LINE WORKS]
+              B --> D[Log System]
+              D --> E[Stats]
+              D --> F[Graphs]
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#bfb,stroke:#333,stroke-width:2px
-    style D fill:#ffb,stroke:#333,stroke-width:2px
-    style E fill:#fbb,stroke:#333,stroke-width:2px
-    style F fill:#bff,stroke:#333,stroke-width:2px
-```
+              style A fill:#f9f,stroke:#333,stroke-width:2px
+              style B fill:#bbf,stroke:#333,stroke-width:2px
+              style C fill:#bfb,stroke:#333,stroke-width:2px
+              style D fill:#ffb,stroke:#333,stroke-width:2px
+              style E fill:#fbb,stroke:#333,stroke-width:2px
+              style F fill:#bff,stroke:#333,stroke-width:2px
+          ```
 
-## 機能
+          ## 機能
 
-- GitHub Actionsによる自動化
-- 毎5分ごとにボットを実行
-- 自動的なREADME更新
-- ログの定期的な更新とアーカイブ
-- LINE WORKSとの連携
-- MQTTプロトコルを使用したメッセージング
-- テキストメッセージとFlexメッセージの送信
+          - GitHub Actionsによる自動化
+          - 毎5分ごとにボットを実行
+          - 自動的なREADME更新
+          - ログの定期的な更新とアーカイブ
+          - LINE WORKSとの連携
+          - MQTTプロトコルを使用したメッセージング
+          - テキストメッセージとFlexメッセージの送信
 
-## ログシステム
+          ## ログシステム
 
-### データ収集
-- 起動時間と最終受信時間の記録
-- メッセージの総数
-- メッセージタイプ別の統計
-- コマンドの総数
-- 時間帯別のメッセージ数
+          ### データ収集
+          - 起動時間と最終受信時間の記録
+          - メッセージの総数
+          - メッセージタイプ別の統計
+          - コマンドの総数
+          - 時間帯別のメッセージ数
 
-### データ可視化
-- 時間帯別のメッセージ数のグラフ
-- メッセージタイプ別の分布
-- コマンドの使用頻度
+          ### データ可視化
+          - 時間帯別のメッセージ数のグラフ
+          - メッセージタイプ別の分布
+          - コマンドの使用頻度
 
-## GitHub Actionsの設定
+          ## GitHub Actionsの設定
 
-- **ワークフロー**: `line_works.yml`
-- 定期実行: 毎5分
-- タスク:
-  - Python環境のセットアップ
-  - 依存関係のインストール
-  - ボットの実行
-  - ログのアーカイブ
-- **README更新ワークフロー**: `readme.yml`
-  - 定期実行: 毎日0時
-  - タスク:
-    - READMEの自動生成
-    - 変更のコミットとプッシュ
+          - **ワークフロー**: `line_works.yml`
+          - 定期実行: 毎5分
+          - タスク:
+            - Python環境のセットアップ
+            - 依存関係のインストール
+            - ボットの実行
+            - ログのアーカイブ
+          - **README更新ワークフロー**: `readme.yml`
+            - 定期実行: 毎日0時
+            - タスク:
+              - READMEの自動生成
+              - 変更のコミットとプッシュ
 
-## 最終更新
-''' + current_time + ' (JST)'
+          ## 最終更新
+          ''' + current_time + ' (JST)'
 
-with open('README.md', 'w') as f:
-    f.write(readme_content)
-EOF
+          with open('README.md', 'w') as f:
+              f.write(readme_content)
+          EOF
 
       # スクリプトを実行
       - name: Run README update script
