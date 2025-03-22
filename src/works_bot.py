@@ -22,7 +22,7 @@ class CommandHandler:
         log_entry = f"- [{timestamp}] Channel: {channel_no}, Command: {command}, Message: {message}\n"
         
         # Update log.md
-        with open("../log/log.md", "a", encoding="utf-8") as f:
+        with open("log/log.md", "a", encoding="utf-8") as f:
             f.write(log_entry)
 
     def handle(self, payload: MessagePayload) -> None:
