@@ -1,2 +1,3 @@
 requests
 line-works-sdk
+python-dotenv==1.0.0
