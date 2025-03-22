@@ -22,10 +22,74 @@ jobs:
           architecture: 'x64'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install matplotlib
+
+      - name: Create log directory
+        run: mkdir -p log
 
       - name: Run bot
         run: |
           python src/works_bot.py
           sleep 300
           python src/works_bot.py &
+
+      - name: Generate log content
+        run: |
+          python -c """
+          import json
+          from datetime import datetime
+          
+          # ログデータの読み込み
+          with open('log/log.yml') as f:
+              content = f.read()
+              stats = json.loads(content.split('stats: ')[1].split('\n')[0])
+          
+          # ログ内容の生成
+          log_content = f"""
+          # ボット実行ログ
+
+          ## 最新の統計情報
+          - 起動時間: {stats['start_time']}
+          - 最終受信時間: {stats['last_receive_time']}
+          - メッセージ総数: {stats['total_messages']}
+          - コマンド総数: {stats['total_commands']}
+
+          ## メッセージタイプ別統計
+          {chr(10).join(f"- {k}: {v}" for k, v in stats['message_types'].items())}
+
+          ## コマンド使用頻度
+          {chr(10).join(f"- {k}: {v}" for k, v in stats['command_types'].items())}
+
+          ## 時間帯別メッセージ数
+          {chr(10).join(f"- {k}時: {v}" for k, v in stats['hourly_stats'].items())}
+
+          ## 最終更新
+          {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (JST)
+          """
+          
+          with open('log/log.md', 'w') as f:
+              f.write(log_content)
+          """
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add log/log.md
+          git commit -m "docs: update log.md"
+        if: github.event_name == 'schedule'
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        if: github.event_name == 'schedule'
+
+      - name: Archive logs
+        if: github.event_name == 'schedule'
+        uses: actions/upload-artifact@v3
+        with:
+          name: bot-logs
+          path: log/

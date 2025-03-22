@@ -1,0 +1,119 @@
+name: Update README
+
+on:
+  workflow_dispatch:  # 手動実行用
+  schedule:
+    - cron: '0 0 * * *'  # 毎日0時に実行
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリのチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Pythonのセットアップ
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.11'
+
+      # 依存関係のインストール
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # READMEコンテンツの生成
+      - name: Generate README content
+        run: |
+          python -c """
+          import os
+          from datetime import datetime
+
+          # プロジェクトの情報
+          readme_content = '''
+          # LINE WORKS Bot Server with GitHub Actions
+
+          このリポジトリはGitHub Actionsを使用してLINE WORKSのボットを自動実行するプロジェクトです。
+
+          ## アーキテクチャ
+
+          ```mermaid
+          graph TD
+              A[GitHub Actions] --> B[LineWorks Bot]
+              B --> C[LINE WORKS]
+              B --> D[Log System]
+              D --> E[Stats]
+              D --> F[Graphs]
+
+              style A fill:#f9f,stroke:#333,stroke-width:2px
+              style B fill:#bbf,stroke:#333,stroke-width:2px
+              style C fill:#bfb,stroke:#333,stroke-width:2px
+              style D fill:#ffb,stroke:#333,stroke-width:2px
+              style E fill:#fbb,stroke:#333,stroke-width:2px
+              style F fill:#bff,stroke:#333,stroke-width:2px
+          ```
+
+          ## 機能
+
+          - GitHub Actionsによる自動化
+          - 毎5分ごとにボットを実行
+          - 自動的なREADME更新
+          - ログの定期的な更新とアーカイブ
+          - LINE WORKSとの連携
+          - MQTTプロトコルを使用したメッセージング
+          - テキストメッセージとFlexメッセージの送信
+
+          ## ログシステム
+
+          ### データ収集
+          - 起動時間と最終受信時間の記録
+          - メッセージの総数
+          - メッセージタイプ別の統計
+          - コマンドの総数
+          - 時間帯別のメッセージ数
+
+          ### データ可視化
+          - 時間帯別のメッセージ数のグラフ
+          - メッセージタイプ別の分布
+          - コマンドの使用頻度
+
+          ## GitHub Actionsの設定
+
+          - **ワークフロー**: `line_works.yml`
+          - 定期実行: 毎5分
+          - タスク:
+            - Python環境のセットアップ
+            - 依存関係のインストール
+            - ボットの実行
+            - ログのアーカイブ
+          - **README更新ワークフロー**: `readme.yml`
+            - 定期実行: 毎日0時
+            - タスク:
+              - READMEの自動生成
+              - 変更のコミットとプッシュ
+
+          ## 最終更新
+          ${datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (JST)
+          '''
+          
+          with open('README.md', 'w') as f:
+              f.write(readme_content)
+        # 結果をREADME.mdに書き込む
+
+      # 変更内容をコミット
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "docs: update README.md"
+        if: github.event_name == 'schedule'
+
+      # 変更をプッシュ
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        if: github.event_name == 'schedule'
