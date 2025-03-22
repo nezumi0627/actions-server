@@ -1,2 +1,2 @@
 requests
-line_works
+line-works-sdk
