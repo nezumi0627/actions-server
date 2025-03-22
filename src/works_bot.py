@@ -5,8 +5,6 @@ from typing import Optional
 
 from line_works.client import LineWorks
 from line_works.mqtt.enums.notification_type import NotificationType
-from line_works.mqtt.enums.packet_type import PacketType
-from line_works.mqtt.models.packet import MQTTPacket
 from line_works.mqtt.models.payload.message import MessagePayload
 from line_works.openapi.talk.models.flex_content import FlexContent
 from line_works.tracer import LineWorksTracer
@@ -54,9 +52,17 @@ class CommandHandler:
 
     def _handle_getdata(self, payload: MessagePayload) -> None:
         """Prepare to receive data"""
-        self._getdata_flag = True
-        self._last_command_user = payload.user_no
-        self.works.send_text_message(payload.channel_no, "Please send your data")
+        if not self._getdata_flag:
+            # First time getdata command, enter "getdata mode"
+            self._getdata_flag = True
+            self._last_command_user = payload.user_no
+            self.works.send_text_message(payload.channel_no, "Getdata mode started. Please send your data.")
+        else:
+            # If getdata mode is already active, proceed to receive data only if it's from the same user
+            if self._last_command_user == payload.user_no:
+                self._process_received_data(payload)
+            else:
+                self.works.send_text_message(payload.channel_no, "You are not authorized to send data at this time.")
 
     def _send_flex_message(self, payload: MessagePayload) -> None:
         """Send flex message"""
@@ -83,11 +89,9 @@ class CommandHandler:
         self.works.send_sticker_message(payload.channel_no, payload.sticker)
 
 
-def receive_publish_packet(works: LineWorks, packet: MQTTPacket) -> None:
+def receive_publish_packet(works: LineWorks, payload: MessagePayload) -> None:
     """Handle publish packet"""
-    payload = packet.payload
-    if isinstance(payload, MessagePayload):
-        CommandHandler(works).handle(payload)
+    CommandHandler(works).handle(payload)
 
 
 def main() -> None:
@@ -102,7 +106,7 @@ def main() -> None:
     print(f"My info: {my_info}")
 
     tracer = LineWorksTracer(works=works)
-    tracer.add_trace_func(PacketType.PUBLISH, receive_publish_packet)
+    tracer.add_trace_func('PUBLISH', receive_publish_packet)
     tracer.trace()
 
 
