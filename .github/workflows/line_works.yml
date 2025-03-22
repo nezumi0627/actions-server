@@ -31,6 +31,6 @@ jobs:
 
       - name: Run bot
         run: |
-          python src/works_bot.py
+          python src/main.py
           sleep 300
-          python src/works_bot.py &
+          python src/main.py &

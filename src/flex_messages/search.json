@@ -1,0 +1,18 @@
+{
+    "type": "bubble",
+    "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+            {
+                "type": "text",
+                "text": "検索結果",
+                "weight": "bold",
+                "size": "xl"
+            },
+            {
+                "type": "separator"
+            }
+        ]
+    }
+}

@@ -1,0 +1,52 @@
+{
+    "type": "bubble",
+    "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+            {
+                "type": "text",
+                "text": "Channel ID: 307465027",
+                "wrap": "true"
+            },
+            {
+                "type": "text",
+                "text": "Visibility: Visible",
+                "wrap": "true"
+            },
+            {
+                "type": "text",
+                "text": "Join Status: Joined",
+                "wrap": "true"
+            },
+            {
+                "type": "text",
+                "text": "Last Message ID: 2",
+                "wrap": "true"
+            },
+            {
+                "type": "text",
+                "text": "First Message ID: No conversation yet",
+                "wrap": "true"
+            },
+            {
+                "type": "text",
+                "text": "Content: Hello, this is a test message",
+                "wrap": "true"
+            },
+            {
+                "type": "text",
+                "text": "Last Updated Message Time: 1732325511233",
+                "wrap": "true"
+            },
+            {
+                "type": "text",
+                "text": "Service Type: line",
+                "wrap": "true"
+            },
+            {
+                "type": "separator"
+            }
+        ]
+    }
+}

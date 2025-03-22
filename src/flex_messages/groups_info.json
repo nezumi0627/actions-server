@@ -1,0 +1,31 @@
+{
+    "type": "bubble",
+    "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+            {
+                "type": "text",
+                "text": "グループ情報",
+                "weight": "bold",
+                "size": "xl"
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "グループ名: {group_name}",
+                        "wrap": true
+                    },
+                    {
+                        "type": "text",
+                        "text": "グループメンバー: {group_members}",
+                        "wrap": true
+                    }
+                ]
+            }
+        ]
+    }
+}

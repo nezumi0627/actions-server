@@ -1,0 +1,29 @@
+"""定数パッケージ."""
+
+from typing import Final
+
+from .commands import (
+    ALL_COMMANDS,
+    COMMAND_PREFIX,
+    FLEX_COMMAND,
+    FRIENDS_COMMAND,
+    GET_DATA_COMMAND,
+    GROUPS_COMMAND,
+    HELP_COMMAND,
+    SEARCH_COMMAND,
+    TEST_COMMAND,
+    USER_INFO_COMMAND,
+)
+
+__all__ = [
+    "COMMAND_PREFIX",
+    "ALL_COMMANDS",
+    "HELP_COMMAND",
+    "TEST_COMMAND",
+    "FLEX_COMMAND",
+    "GET_DATA_COMMAND",
+    "USER_INFO_COMMAND",
+    "SEARCH_COMMAND",
+    "GROUPS_COMMAND",
+    "FRIENDS_COMMAND",
+]
