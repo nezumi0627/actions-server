@@ -3,10 +3,8 @@ import psutil
 import subprocess
 import socket
 import datetime
-import winreg
 import locale
 from locale import setlocale, LC_ALL
-
 
 def get_system_info():
     """Get system information."""
@@ -22,18 +20,15 @@ def get_system_info():
         "language": get_language_info(),
     }
 
-
 def get_os_info():
     """Get OS information."""
     return f"{platform.system()} {platform.release()} ({platform.version()})"
-
 
 def get_cpu_info():
     """Get CPU information."""
     cpu = platform.processor()
     cpu_count = psutil.cpu_count(logical=True)
     return f"{cpu} ({cpu_count} cores)"
-
 
 def get_gpu_info():
     """Get GPU information."""
@@ -44,14 +39,12 @@ def get_gpu_info():
     except Exception:
         return "Unknown"
 
-
 def get_ram_info():
     """Get RAM information."""
     mem = psutil.virtual_memory()
     total = mem.total // (1024 * 1024)
     available = mem.available // (1024 * 1024)
     return f"Total: {total} MB, Available: {available} MB"
-
 
 def get_disk_info():
     """Get disk information."""
@@ -71,7 +64,6 @@ def get_disk_info():
             continue
     return disk_info
 
-
 def get_network_info():
     """Get network information."""
     net_info = []
@@ -85,7 +77,6 @@ def get_network_info():
                 })
     return net_info
 
-
 def get_system_uptime():
     """Get system uptime."""
     boot_time = datetime.datetime.fromtimestamp(psutil.boot_time())
@@ -93,19 +84,19 @@ def get_system_uptime():
     uptime = current_time - boot_time
     return str(uptime).split('.')[0]
 
-
 def get_windows_version():
-    """Get Windows version."""
-    if platform.system() != 'Windows':
+    """Get Windows version. If not Windows, return N/A."""
+    if platform.system() == 'Windows':
+        try:
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion")
+            release_id = winreg.QueryValueEx(key, "ReleaseId")[0]
+            current_version = winreg.QueryValueEx(key, "CurrentVersion")[0]
+            return f"Windows 10 Version {release_id} (Build {current_version})"
+        except Exception:
+            return "Unknown Windows Version"
+    else:
         return "N/A (Not Windows)"
-    try:
-        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows NT\CurrentVersion")
-        release_id = winreg.QueryValueEx(key, "ReleaseId")[0]
-        current_version = winreg.QueryValueEx(key, "CurrentVersion")[0]
-        return f"Windows 10 Version {release_id} (Build {current_version})"
-    except Exception:
-        return "Unknown Windows Version"
-
 
 def get_language_info():
     """Get language information."""
@@ -115,7 +106,6 @@ def get_language_info():
     except Exception:
         return "Unknown"
 
-
 def format_network_info(info):
     """Format network information."""
     formatted = []
@@ -123,14 +113,12 @@ def format_network_info(info):
         formatted.append(f"{item['Interface']}: {item['IP Address']} ({item['Netmask']})")
     return formatted
 
-
 def format_disk_info(info):
     """Format disk information."""
     formatted = []
     for item in info:
         formatted.append(f"{item['Drive']}: {item['Total']}, Used: {item['Used']}, Free: {item['Free']}, {item['Percent']}")
     return formatted
-
 
 if __name__ == "__main__":
     # Get all system information
