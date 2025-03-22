@@ -51,7 +51,6 @@ class CommandHandler:
                     "/flex: send flex message\n"
                     "!help: show this message\n"
                     "!speed: measure send/receive message speed\n"
-                    "!sticker: send sticker"
                 )
                 self.works.send_text_message(payload.channel_no, help_message)
                 self.log_command(payload.channel_no, "!help", "showed help")
