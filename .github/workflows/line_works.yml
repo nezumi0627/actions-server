@@ -24,10 +24,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install matplotlib
+          pip install matplotlib pandas
 
       - name: Create log directory
         run: mkdir -p log
+
+      - name: Create initial log file
+        run: touch log/log.md
 
       - name: Run bot
         run: |
@@ -35,57 +38,76 @@ jobs:
           sleep 300
           python src/works_bot.py &
 
-      - name: Generate log content
+      - name: Analyze logs
         run: |
           python -c """
+          import os
           import json
+          import matplotlib.pyplot as plt
+          import pandas as pd
           from datetime import datetime
-          
-          # ログデータの読み込み
-          with open('log/log.yml') as f:
-              content = f.read()
-              stats = json.loads(content.split('stats: ')[1].split('\n')[0])
-          
-          # ログ内容の生成
-          log_content = f"""
-          # ボット実行ログ
 
-          ## 最新の統計情報
-          - 起動時間: {stats['start_time']}
-          - 最終受信時間: {stats['last_receive_time']}
-          - メッセージ総数: {stats['total_messages']}
-          - コマンド総数: {stats['total_commands']}
+          # Read log file
+          with open('log/log.md', 'r', encoding='utf-8') as f:
+              lines = f.readlines()
 
-          ## メッセージタイプ別統計
-          {chr(10).join(f"- {k}: {v}" for k, v in stats['message_types'].items())}
+          # Initialize counters
+          start_time = None
+          message_count = 0
+          command_counts = {}
 
-          ## コマンド使用頻度
-          {chr(10).join(f"- {k}: {v}" for k, v in stats['command_types'].items())}
+          # Parse log entries
+          for line in lines:
+              if line.startswith('- ['):
+                  message_count += 1
+                  parts = line.split(', ')
+                  timestamp = parts[0][4:24]
+                  channel = parts[1].split(': ')[1]
+                  command = parts[2].split(': ')[1]
 
-          ## 時間帯別メッセージ数
-          {chr(10).join(f"- {k}時: {v}" for k, v in stats['hourly_stats'].items())}
+                  if not start_time:
+                      start_time = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+                  
+                  if command not in command_counts:
+                      command_counts[command] = 0
+                  command_counts[command] += 1
 
-          ## 最終更新
-          {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (JST)
+          # Calculate runtime
+          end_time = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+          runtime = end_time - start_time
+
+          # Create statistics
+          stats = [
+              f"# Bot Statistics\n",
+              f"- Runtime: {runtime}\n",
+              f"- Total Messages: {message_count}\n",
+              f"- Total Commands: {sum(command_counts.values())}\n",
+              "\n## Command Usage Statistics\n",
+          ]
+
+          # Sort commands by usage
+          sorted_commands = sorted(command_counts.items(), key=lambda x: x[1], reverse=True)
+
+          # Add command usage stats
+          for cmd, count in sorted_commands:
+              stats.append(f"- {cmd}: {count} times\n")
+
+          # Create bar chart for command usage
+          plt.figure(figsize=(10, 6))
+          commands = [cmd for cmd, _ in sorted_commands]
+          counts = [count for _, count in sorted_commands]
+          plt.bar(commands, counts)
+          plt.title('Command Usage Statistics')
+          plt.xlabel('Commands')
+          plt.ylabel('Usage Count')
+          plt.xticks(rotation=45)
+          plt.tight_layout()
+          plt.savefig('log/command_usage.png')
+
+          # Update log.md with statistics
+          with open('log/log.md', 'w', encoding='utf-8') as f:
+              f.writelines(stats)
           """
-          
-          with open('log/log.md', 'w') as f:
-              f.write(log_content)
-          """
-
-      - name: Commit changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add log/log.md
-          git commit -m "docs: update log.md"
-        if: github.event_name == 'schedule'
-
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-        if: github.event_name == 'schedule'
 
       - name: Archive logs
         if: github.event_name == 'schedule'
