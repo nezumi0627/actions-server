@@ -2,27 +2,6 @@
 
 このリポジトリはGitHub Actionsを使用してLINE WORKSのボットをサーバーレスで実行するプロジェクトです。
 
-## アーキテクチャ
-
-### システム構成
-
-```mermaid
-graph LR
-    A[GitHub Actions] --> B[LineWorks Bot]
-    B --> C[LINE WORKS]
-    B --> D[Log System]
-    D --> E[Stats]
-    D --> F[Graphs]
-    
-    A1[定期実行 (5分毎)] --> A2[Python環境セットアップ]
-    A2 --> A3[依存関係インストール]
-    A3 --> A4[ボット実行]
-    A4 --> A5[ログ更新]
-    A5 --> A6[アーカイブ]
-    
-    %% A1からA6はGitHub Actions Workflowの一部
-```
-
 ### コンポーネント詳細
 
 1. **GitHub Actions Workflow**
