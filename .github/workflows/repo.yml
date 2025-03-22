@@ -1,0 +1,198 @@
+name: Repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      tmate:
+        type: boolean
+        description: 'SSH debug'
+        required: false
+        default: false
+      cmd:
+        type: string
+        description: 'Custom commands'
+        required: false
+        default: ''
+
+  schedule:
+    - cron: '47 */3 * * *'
+  push:
+    paths:
+      - packages.txt
+
+concurrency:
+  group: repo
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base
+      options: --privileged
+
+    steps:
+      - name: Pre setup
+        run: |
+          set -x
+          useradd -m builder
+
+          # language support?
+          rm -r /__t/*
+
+          mount /dev/root /mnt
+          curl -L https://github.com/akku1139/auto-aur/raw/refs/heads/main/scripts/tidyup.sh > /mnt/tidyup.sh
+          chmod 777 /mnt/tidyup.sh
+          chroot /mnt /tidyup.sh &
+
+      - uses: actions/cache@v4
+        with:
+          path: | # Must be synchronized with save
+            /__w/auto-aur/auto-aur
+            /var/cache/pacman/pkg
+            /home/builder/.cache
+            /home/builder/.cargo
+            /home/builder/go
+            /home/builder/.dub
+            /home/builder/.cabal
+          # /home/builder/.ccache
+          key: cache-${{ github.sha }}
+          restore-keys: cache-
+
+      - name: Pre setup 2
+        run: |
+          set -x
+
+          pacman --noconfirm -Syu
+          pacman --noconfirm -S git btrfs-progs
+          git config --global --add safe.directory $PWD
+
+          mkdir /pre /ext
+
+          if [ "/dev/sda1" = $( mount | grep -F "/__e" | cut -d " " -f1 ) ]; then
+            mount /dev/sdb1 /pre
+          else
+            mount /dev/sda1 /pre
+          fi
+
+          # move swap 1
+          swapoff /pre/swapfile
+          rm -r /pre/*
+
+          fallocate -l $( df -h | awk '$6 == "/pre" { print $4 }' ) /pre/fs
+          mkfs.btrfs -f /pre/fs
+          mount -o compress-force=zstd,nobarrier,noatime /pre/fs /ext
+
+          df -h
+
+          # builder setup
+          mkdir /ext/builder
+          chown builder:builder /ext/builder
+
+          # move swap 2
+          fallocate -l 8GB /swapfile
+          chmod 0600 /swapfile
+          mkswap /swapfile
+          losetup -f /swapfile
+          swapon $( losetup -a | grep -F "/swapfile" | cut -d: -f1 )
+
+      - uses: mxschmitt/action-tmate@v3
+        if: ${{ inputs.tmate }}
+        with:
+          detached: true
+
+      - uses: actions/checkout@v4
+
+      - name: Setup (root)
+        run: scripts/setup-root.sh
+
+      - name: Setup (builder)
+        run: sudo -E -u builder bash ./scripts/setup-builder.sh
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Custom commands
+        if: ${{ inputs.cmd != '' }}
+        run: |
+          su builder
+          ${{ inputs.cmd }}
+
+      - name: Remove packages
+        run: |
+          cat input/remove.txt | { while read pkg; do
+            if [ "$pkg" = "" ]; then
+              continue
+            fi
+            sudo -u builder paru --noconfirm -Ld "$pkg"
+            bash scripts/git-save.sh
+          done }
+          echo > input/remove.txt
+          bash scripts/git-save.sh
+
+      - name: Update AUR
+        run: |
+          cat input/update.txt | { while read pkg; do
+            if [ "$pkg" = "" ]; then
+              continue
+            fi
+            sudo -u builder paru --ask=4 --noconfirm --aur -S "$pkg"
+            bash scripts/git-save.sh
+            sudo -u builder paru --noconfirm -R "$pkg"
+          done }
+          echo > input/update.txt
+          yes | sudo -u builder paru --ask=4 --noconfirm --batchinstall -Syu || true
+          bash scripts/git-save.sh
+
+      - name: Build AUR
+        run: sudo -u builder bash -ex scripts/build.sh
+
+      - name: Generate UI
+        run: python scripts/genui.py
+
+      - name: Git
+        id: git
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "change=true" >> $GITHUB_OUTPUT
+            git pull
+            git add -A
+            git commit -m "Data"
+            git push
+          else
+            echo "There are no changes."
+            echo "change=false" >> $GITHUB_OUTPUT
+          fi
+          git clean -ffdx
+          git reset --hard HEAD
+
+      - name: Upload Pages Artifact
+        if: ${{ steps.git.outputs.change == 'true' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "public/"
+
+      - name: Deploy to GitHub Pages
+        if: ${{ steps.git.outputs.change == 'true' }}
+        uses: actions/deploy-pages@v4
+
+      - run: echo "/__e/node20/bin" >> $GITHUB_PATH
+        if: ${{ steps.git.outputs.change == 'true' }}
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0.9.0
+        if: ${{ steps.git.outputs.change == 'true' }}
+        with:
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: auto-aur
+          channelId: live
+
+      - name: Debug info
+        #if: ${{ failure() }}
+        if: ${{ !cancelled() }}
+        run: |
+          df -h
