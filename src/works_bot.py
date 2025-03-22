@@ -4,11 +4,9 @@ import time
 from typing import Optional, Dict
 
 from line_works.client import LineWorks
-from line_works.mqtt.enums.notification_type import NotificationType
 from line_works.mqtt.enums.packet_type import PacketType
 from line_works.mqtt.models.packet import MQTTPacket
 from line_works.mqtt.models.payload.message import MessagePayload
-from line_works.mqtt.models.payload.sticker import StickerPayload
 from line_works.openapi.talk.models.flex_content import FlexContent
 from line_works.tracer import LineWorksTracer
 
@@ -43,7 +41,6 @@ def receive_publish_packet(w: LineWorks, p: MQTTPacket) -> None:
                 "/flex: send flex message\n"
                 "!help: show this message\n"
                 "!speed: measure send/receive message speed\n"
-                "!sticker: send sticker"
             )
             w.send_text_message(payload.channel_no, help_message)
         case "!speed":
@@ -52,14 +49,6 @@ def receive_publish_packet(w: LineWorks, p: MQTTPacket) -> None:
             end_time: float = time.time()
             elapsed_time: float = end_time - start_time
             w.send_text_message(payload.channel_no, f"{elapsed_time:.2f} sec")
-        case "!sticker":
-            sticker_payload = StickerPayload(
-                sticker_id="165611633",
-                sticker_resource_type="STATIC",
-                sticker_uri="https://scdn.line-apps.com/n/sticker/165611633/l",
-            )
-            w.send_sticker_message(payload.channel_no, sticker_payload)
-
 
 if __name__ == "__main__":
     works_id: Optional[str] = os.getenv('WORKS_ID')
