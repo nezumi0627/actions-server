@@ -177,7 +177,7 @@ def send_flex_notification(result: str) -> None:
         
         # メッセージを送信
         works.send_flex_message(
-            NOTIFY_USER_ID,
+            channel_no=int(NOTIFY_USER_ID),
             flex_content=FlexContent(alt_text="実行結果", contents=flex_template)
         )
         
