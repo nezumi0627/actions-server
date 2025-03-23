@@ -1,0 +1,262 @@
+{
+  "type": "bubble",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "ワークフロー実行結果",
+        "weight": "bold",
+        "size": "xl",
+        "wrap": true
+      }
+    ]
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "md",
+    "contents": [
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "lg",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "box",
+            "layout": "baseline",
+            "spacing": "sm",
+            "contents": [
+              {
+                "type": "text",
+                "text": "実行状態:",
+                "color": "#aaaaaa",
+                "size": "sm",
+                "flex": 2,
+                "wrap": true
+              },
+              {
+                "type": "text",
+                "text": "$status",
+                "wrap": true,
+                "color": "#666666",
+                "size": "sm",
+                "flex": 5,
+                "wrap": true
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "spacing": "sm",
+            "contents": [
+              {
+                "type": "text",
+                "text": "実行時間:",
+                "color": "#aaaaaa",
+                "size": "sm",
+                "flex": 2,
+                "wrap": true
+              },
+              {
+                "type": "text",
+                "text": "$time",
+                "wrap": true,
+                "color": "#666666",
+                "size": "sm",
+                "flex": 5,
+                "wrap": true
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "baseline",
+            "spacing": "sm",
+            "contents": [
+              {
+                "type": "text",
+                "text": "実行結果:",
+                "color": "#aaaaaa",
+                "size": "sm",
+                "flex": 2,
+                "wrap": true
+              },
+              {
+                "type": "text",
+                "text": "$result",
+                "wrap": true,
+                "color": "#666666",
+                "size": "sm",
+                "flex": 5,
+                "wrap": true
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "vertical",
+            "margin": "lg",
+            "contents": [
+              {
+                "type": "text",
+                "text": "システム情報",
+                "weight": "bold",
+                "size": "md",
+                "wrap": true
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "OS:",
+                    "color": "#aaaaaa",
+                    "size": "sm",
+                    "flex": 2,
+                    "wrap": true
+                  },
+                  {
+                    "type": "text",
+                    "text": "$os",
+                    "wrap": true,
+                    "color": "#666666",
+                    "size": "sm",
+                    "flex": 5,
+                    "wrap": true
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "CPU使用率:",
+                    "color": "#aaaaaa",
+                    "size": "sm",
+                    "flex": 2,
+                    "wrap": true
+                  },
+                  {
+                    "type": "text",
+                    "text": "$cpu",
+                    "wrap": true,
+                    "color": "#666666",
+                    "size": "sm",
+                    "flex": 5,
+                    "wrap": true
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "メモリ使用率:",
+                    "color": "#aaaaaa",
+                    "size": "sm",
+                    "flex": 2,
+                    "wrap": true
+                  },
+                  {
+                    "type": "text",
+                    "text": "$memory",
+                    "wrap": true,
+                    "color": "#666666",
+                    "size": "sm",
+                    "flex": 5,
+                    "wrap": true
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "IPアドレス:",
+                    "color": "#aaaaaa",
+                    "size": "sm",
+                    "flex": 2,
+                    "wrap": true
+                  },
+                  {
+                    "type": "text",
+                    "text": "$ip",
+                    "wrap": true,
+                    "color": "#666666",
+                    "size": "sm",
+                    "flex": 5,
+                    "wrap": true
+                  }
+                ]
+              },
+              {
+                "type": "box",
+                "layout": "baseline",
+                "spacing": "sm",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "ディスク使用率:",
+                    "color": "#aaaaaa",
+                    "size": "sm",
+                    "flex": 2,
+                    "wrap": true
+                  },
+                  {
+                    "type": "text",
+                    "text": "$disk",
+                    "wrap": true,
+                    "color": "#666666",
+                    "size": "sm",
+                    "flex": 5,
+                    "wrap": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "separator"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+          {
+            "type": "text",
+            "text": "自動通知システム",
+            "color": "#aaaaaa",
+            "size": "xs",
+            "align": "center",
+            "wrap": true
+          }
+        ]
+      }
+    ],
+    "flex": 0
+  }
+}
