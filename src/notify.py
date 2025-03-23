@@ -67,7 +67,7 @@ class SystemInfo:
             ip = s.getsockname()[0]
             s.close()
             return ip
-        except:
+        except Exception:
             return "取得できません"
 
     @staticmethod
@@ -177,8 +177,8 @@ def send_flex_notification(result: str) -> None:
         
         # メッセージを送信
         works.send_flex_message(
-            channel_no=int(NOTIFY_USER_ID),
-            flex_content=FlexContent(alt_text="実行結果", contents=flex_template)
+            to=int(NOTIFY_USER_ID),
+            flex_content=FlexContent(altText="実行結果", contents=flex_template)
         )
         
     except Exception as e:
