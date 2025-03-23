@@ -33,12 +33,11 @@
                 },
                 {
                   "type": "text",
-                  "text": "$status",
+                  "text": "{{status}}",
                   "wrap": true,
                   "color": "#666666",
                   "size": "sm",
-                  "flex": 5,
-                  "wrap": true
+                  "flex": 5
                 }
               ]
             },
@@ -57,12 +56,11 @@
                 },
                 {
                   "type": "text",
-                  "text": "$time",
+                  "text": "{{time}}",
                   "wrap": true,
                   "color": "#666666",
                   "size": "sm",
-                  "flex": 5,
-                  "wrap": true
+                  "flex": 5
                 }
               ]
             },
@@ -81,12 +79,11 @@
                 },
                 {
                   "type": "text",
-                  "text": "$result",
+                  "text": "{{result}}",
                   "wrap": true,
                   "color": "#666666",
                   "size": "sm",
-                  "flex": 5,
-                  "wrap": true
+                  "flex": 5
                 }
               ]
             },
@@ -117,12 +114,11 @@
                     },
                     {
                       "type": "text",
-                      "text": "$os",
+                      "text": "{{os}}",
                       "wrap": true,
                       "color": "#666666",
                       "size": "sm",
-                      "flex": 5,
-                      "wrap": true
+                      "flex": 5
                     }
                   ]
                 },
@@ -141,12 +137,11 @@
                     },
                     {
                       "type": "text",
-                      "text": "$cpu",
+                      "text": "{{cpu}}",
                       "wrap": true,
                       "color": "#666666",
                       "size": "sm",
-                      "flex": 5,
-                      "wrap": true
+                      "flex": 5
                     }
                   ]
                 },
@@ -165,12 +160,11 @@
                     },
                     {
                       "type": "text",
-                      "text": "$memory",
+                      "text": "{{memory}}",
                       "wrap": true,
                       "color": "#666666",
                       "size": "sm",
-                      "flex": 5,
-                      "wrap": true
+                      "flex": 5
                     }
                   ]
                 },
@@ -189,12 +183,11 @@
                     },
                     {
                       "type": "text",
-                      "text": "$ip",
+                      "text": "{{ip}}",
                       "wrap": true,
                       "color": "#666666",
                       "size": "sm",
-                      "flex": 5,
-                      "wrap": true
+                      "flex": 5
                     }
                   ]
                 },
@@ -213,36 +206,11 @@
                     },
                     {
                       "type": "text",
-                      "text": "$disk",
+                      "text": "{{disk}}",
                       "wrap": true,
                       "color": "#666666",
                       "size": "sm",
-                      "flex": 5,
-                      "wrap": true
-                    }
-                  ]
-                },
-                {
-                  "type": "box",
-                  "layout": "baseline",
-                  "spacing": "sm",
-                  "contents": [
-                    {
-                      "type": "text",
-                      "text": "GitHub Actions:",
-                      "color": "#aaaaaa",
-                      "size": "sm",
-                      "flex": 2,
-                      "wrap": true
-                    },
-                    {
-                      "type": "text",
-                      "text": "$github_url",
-                      "wrap": true,
-                      "color": "#666666",
-                      "size": "sm",
-                      "flex": 5,
-                      "wrap": true
+                      "flex": 5
                     }
                   ]
                 }
@@ -251,19 +219,24 @@
           ]
         },
         {
-          "type": "separator"
-        },
-        {
           "type": "box",
           "layout": "vertical",
+          "margin": "lg",
           "contents": [
             {
               "type": "text",
-              "text": "自動通知システム",
+              "text": "ワークフロー実行通知システム",
               "color": "#aaaaaa",
-              "size": "xs",
-              "align": "center",
+              "size": "sm",
               "wrap": true
+            },
+            {
+              "action": {
+                "type": "uri",
+                "label": "Github Actions",
+                "uri": "{{github_url}}"
+              },
+              "type": "button"
             }
           ]
         }
