@@ -139,7 +139,10 @@ def send_flex_notification(result: str) -> None:
     )
     line_works.send_message(
         user_id=NOTIFY_USER_ID,
-        message=FlexContent(**flex_content_dict)
+        message=FlexContent(
+            altText="ワークフロー実行結果通知",
+            contents=flex_content_dict
+        )
     )
 
 def main() -> None:
