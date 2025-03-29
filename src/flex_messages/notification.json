@@ -33,7 +33,7 @@
               },
               {
                 "type": "text",
-                "text": "{{status}}",
+                "text": "${status}",
                 "wrap": true,
                 "color": "#666666",
                 "size": "sm",
@@ -56,7 +56,7 @@
               },
               {
                 "type": "text",
-                "text": "{{time}}",
+                "text": "${time}",
                 "wrap": true,
                 "color": "#666666",
                 "size": "sm",
@@ -79,7 +79,7 @@
               },
               {
                 "type": "text",
-                "text": "{{result}}",
+                "text": "${result}",
                 "wrap": true,
                 "color": "#666666",
                 "size": "sm",
@@ -114,7 +114,7 @@
                   },
                   {
                     "type": "text",
-                    "text": "{{os}}",
+                    "text": "${os}",
                     "wrap": true,
                     "color": "#666666",
                     "size": "sm",
@@ -137,7 +137,7 @@
                   },
                   {
                     "type": "text",
-                    "text": "{{cpu}}",
+                    "text": "${cpu}",
                     "wrap": true,
                     "color": "#666666",
                     "size": "sm",
@@ -160,7 +160,7 @@
                   },
                   {
                     "type": "text",
-                    "text": "{{memory}}",
+                    "text": "${memory}",
                     "wrap": true,
                     "color": "#666666",
                     "size": "sm",
@@ -183,7 +183,7 @@
                   },
                   {
                     "type": "text",
-                    "text": "{{ip}}",
+                    "text": "${ip}",
                     "wrap": true,
                     "color": "#666666",
                     "size": "sm",
@@ -206,7 +206,7 @@
                   },
                   {
                     "type": "text",
-                    "text": "{{disk}}",
+                    "text": "${disk}",
                     "wrap": true,
                     "color": "#666666",
                     "size": "sm",

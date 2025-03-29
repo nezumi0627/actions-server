@@ -83,15 +83,20 @@ class NotificationTemplate:
             if isinstance(obj, dict):
                 for key, value in obj.items():
                     if isinstance(value, str):
-                        # {{}}形式の変数を置換
+                        # ${}形式の変数を置換
                         for var_name, var_value in variables.items():
-                            value = value.replace(f"{{{{ {var_name} }}}}", var_value)
+                            value = value.replace(f"${{{var_name}}}", var_value)
                         obj[key] = value
                     elif isinstance(value, dict):
                         replace_text(value, variables)
             return obj
 
         return replace_text(self.template.copy(), variables)
+
+def load_flex_message(filename: str, alt_text: str) -> FlexContent:
+    with open(f"src/flex_messages/{filename}", "r", encoding="utf-8") as f:
+        flex_content = json.load(f)
+    return FlexContent(altText=alt_text, contents=flex_content)
 
 def get_system_info() -> Dict[str, str]:
     """Returns a dictionary of system information."""
@@ -113,10 +118,6 @@ def get_github_info() -> Dict[str, str]:
 
 def send_flex_notification(result: str) -> None:
     """LINE WORKS APIを使用して通知メッセージを送信します。"""
-    # 通知テンプレートの読み込み
-    template = NotificationTemplate("src/flex_messages/notification.json")
-    template.load_template()
-
     # 変数の値を設定
     variables = {
         "status": "完了",  # 実際のワークフロー状態
@@ -125,12 +126,19 @@ def send_flex_notification(result: str) -> None:
         **get_system_info()  # システム情報
     }
 
-    # 変数を置換
-    flex_content = template.replace_variables(variables)
+    # Flexメッセージを読み込む
+    flex_content = load_flex_message(
+        filename="notification.json",
+        alt_text="ワークフロー実行結果通知"
+    )
 
-    # JSON文字列に変換して再度パース
-    flex_content_str = json.dumps(flex_content, ensure_ascii=False)
-    flex_content_dict = json.loads(flex_content_str)
+    # 変数を置換
+    flex_content_str = json.dumps(flex_content.contents, ensure_ascii=False)
+    for var_name, var_value in variables.items():
+        flex_content_str = flex_content_str.replace(f"${{{var_name}}}", var_value)
+    
+    # JSON文字列を再度パース
+    flex_content.contents = json.loads(flex_content_str)
 
     # LINE WORKS APIを使用して通知を送信
     line_works = CustomLineWorks(
@@ -139,10 +147,7 @@ def send_flex_notification(result: str) -> None:
     )
     line_works.send_flex_message(
         to=int(NOTIFY_USER_ID),
-        flex_content=FlexContent(
-            altText="ワークフロー実行結果通知",
-            contents=flex_content_dict
-        )
+        flex_content=flex_content
     )
 
 def main() -> None:
