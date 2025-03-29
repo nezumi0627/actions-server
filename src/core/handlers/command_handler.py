@@ -18,8 +18,8 @@ from core.constants.commands import (
     TEST_COMMAND,
     USER_INFO_COMMAND,
 )
-from core.utils import load_flex_message
 from core.get_info import get_system_info
+from core.utils import load_flex_message
 from custom_line_works import CustomLineWorks
 
 # データ取得状態を管理する辞書

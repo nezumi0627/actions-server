@@ -4,20 +4,36 @@ This module provides functionality to send notifications to specific users
 using the LINE WORKS API.
 """
 
-import logging
 import json
-import sys
-import psutil
+import logging
+import os
 import platform
 import socket
-import os
+import sys
 from datetime import datetime
 from typing import Dict
 
-from custom_line_works import CustomLineWorks
+import psutil
+from dotenv import load_dotenv
 from line_works.openapi.talk.models.flex_content import FlexContent
 
-from dotenv import load_dotenv
+from custom_line_works import CustomLineWorks
+
+# Logger setup
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+file_handler = logging.FileHandler('notify.log', encoding='utf-8')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.DEBUG)
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -66,10 +82,11 @@ class NotificationTemplate:
         def replace_text(obj: Dict, variables: Dict) -> Dict:
             if isinstance(obj, dict):
                 for key, value in obj.items():
-                    if isinstance(value, str) and "{{" in value:
-                        # Remove {{ }} and get the variable name
-                        var_name = value.replace("{{", "").replace("}}", "")
-                        obj[key] = variables.get(var_name, value)
+                    if isinstance(value, str):
+                        # {{}}形式の変数を置換
+                        for var_name, var_value in variables.items():
+                            value = value.replace(f"{{{{ {var_name} }}}}", var_value)
+                        obj[key] = value
                     elif isinstance(value, dict):
                         replace_text(value, variables)
             return obj
@@ -79,17 +96,17 @@ class NotificationTemplate:
 def get_system_info() -> Dict[str, str]:
     """Returns a dictionary of system information."""
     return {
-        "os": SystemInfo.os_info(),
-        "cpu": SystemInfo.cpu_usage(),
-        "memory": SystemInfo.memory_usage(),
-        "ip": SystemInfo.ip_address(),
-        "disk": SystemInfo.disk_usage()
+        "$os": SystemInfo.os_info(),
+        "$cpu": SystemInfo.cpu_usage(),
+        "$memory": SystemInfo.memory_usage(),
+        "$ip": SystemInfo.ip_address(),
+        "$disk": SystemInfo.disk_usage()
     }
 
 def get_github_info() -> Dict[str, str]:
     """Returns GitHub Actions information."""
     return {
-        "github_url": os.getenv('GITHUB_SERVER_URL', '') + '/' + 
+        "$github_url": os.getenv('GITHUB_SERVER_URL', '') + '/' + 
                        os.getenv('GITHUB_REPOSITORY', '') + '/' + 
                        os.getenv('GITHUB_RUN_ID', '')
     }
@@ -102,9 +119,9 @@ def send_flex_notification(result: str) -> None:
         template.load_template()
 
         variables = {
-            "status": "OK" if result else "ERROR",
-            "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "result": result,
+            "$status": "OK" if result else "ERROR",
+            "$time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "$result": result,
             **get_system_info(),
             **get_github_info()
         }
@@ -114,12 +131,14 @@ def send_flex_notification(result: str) -> None:
             to=int(NOTIFY_USER_ID),
             flex_content=FlexContent(altText="Notification", contents=flex_template)
         )
-    except Exception:
+    except Exception as e:
+        logger.error(f"An error occurred: {e}", exc_info=True)
         raise
 
 def main() -> None:
     """Main execution function."""
     if len(sys.argv) != 2:
+        logger.error("Usage: python notify.py <result>")
         sys.exit(1)
     send_flex_notification(sys.argv[1])
 
