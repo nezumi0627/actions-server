@@ -133,7 +133,10 @@ def send_flex_notification(result: str) -> None:
     flex_content_dict = json.loads(flex_content_str)
 
     # LINE WORKS APIを使用して通知を送信
-    line_works = CustomLineWorks(WORKS_ID, PASSWORD)
+    line_works = CustomLineWorks(
+        works_id=WORKS_ID,
+        password=PASSWORD
+    )
     line_works.send_message(
         user_id=NOTIFY_USER_ID,
         message=FlexContent(**flex_content_dict)
