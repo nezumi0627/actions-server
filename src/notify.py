@@ -112,28 +112,32 @@ def get_github_info() -> Dict[str, str]:
     }
 
 def send_flex_notification(result: str) -> None:
-    """Sends a notification message using LINE WORKS API."""
-    try:
-        works = CustomLineWorks(works_id=WORKS_ID, password=PASSWORD)
-        template = NotificationTemplate("src/flex_messages/notification.json")
-        template.load_template()
+    """LINE WORKS APIを使用して通知メッセージを送信します。"""
+    # 通知テンプレートの読み込み
+    template = NotificationTemplate("src/flex_messages/notification.json")
+    template.load_template()
 
-        variables = {
-            "$status": "OK" if result else "ERROR",
-            "$time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "$result": result,
-            **get_system_info(),
-            **get_github_info()
-        }
-        flex_template = template.replace_variables(variables)
+    # 変数の値を設定
+    variables = {
+        "status": "完了",  # 実際のワークフロー状態
+        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # 実行時間
+        "result": result,  # 実行結果
+        **get_system_info()  # システム情報
+    }
 
-        works.send_flex_message(
-            to=int(NOTIFY_USER_ID),
-            flex_content=FlexContent(altText="Notification", contents=flex_template)
-        )
-    except Exception as e:
-        logger.error(f"An error occurred: {e}", exc_info=True)
-        raise
+    # 変数を置換
+    flex_content = template.replace_variables(variables)
+
+    # JSON文字列に変換して再度パース
+    flex_content_str = json.dumps(flex_content, ensure_ascii=False)
+    flex_content_dict = json.loads(flex_content_str)
+
+    # LINE WORKS APIを使用して通知を送信
+    line_works = CustomLineWorks(WORKS_ID, PASSWORD)
+    line_works.send_message(
+        user_id=NOTIFY_USER_ID,
+        message=FlexContent(**flex_content_dict)
+    )
 
 def main() -> None:
     """Main execution function."""
