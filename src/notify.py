@@ -138,7 +138,7 @@ def send_flex_notification(result: str) -> None:
         password=PASSWORD
     )
     line_works.send_flex_message(
-        user_id=NOTIFY_USER_ID,
+        to=int(NOTIFY_USER_ID),
         flex_content=FlexContent(
             altText="ワークフロー実行結果通知",
             contents=flex_content_dict
